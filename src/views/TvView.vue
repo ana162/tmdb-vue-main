@@ -8,23 +8,66 @@
   const genres = ref([]);
   const genreStore = useGenreStore();
   const isLoading = ref(false);
-  const movies = ref([]);
+  const discover = ref([]);
   const router = useRouter()
 
-  onMounted(async () => {
-    const response = await api.get('genre/tv/list?language=pt-BR');
-    genres.value = response.data.genres;
+  const getGenreName = (id) => genreStore.genres.find((genre) => genre.id == id)?.name || 'teste'
+  const listtv = async (genreId) => {
+    genreStore.setCurrentGenreId(genreId);
+  isLoading.value = true;
+  const response = await api.get('discover/tv', {
+
+    params: {
+      with_genres: genreId,
+      language: 'pt-BR'
+
+    }
   });
+  discover.value = response.data.results
+  isLoading.value = false;
+};
+
+const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR');
+
+function opendiscover(discoverId) {
+  router.push({ name: 'discoverDetails', params: { discoverId } });
+}
+  onMounted(async () => {
+    isLoading.value = true;
+  await genreStore.getAllGenres('tv');
+  isLoading.value = false;
+    
+  });
+  
 </script>
 
 <template>
   <h1>Programas de TV</h1>
   <ul class="genre-list">
-    <li v-for="genre in genres" :key="genre.id" class="genre-item">
+      <li v-for="genre in genreStore.genres" :key="genre.id" @click="listtv(genre.id)" class="genre-item"
+      :class="{ active: genre.id === genreStore.currentGenreId }">
       {{ genre.name }}
-
     </li>
   </ul>
+  <loading v-model:active="isLoading" is-full-page />
+  <div class="discover-list">
+    <div v-for="discover in discover" :key="discover.id" class="discover-card">
+
+      <img :src="`https://image.tmdb.org/t/p/w500${discover.poster_path}`" :alt="discover.title"
+        @click="opendiscover(discover.id)" />
+      <div class="discover-details">
+        <p class="discover-title">{{ discover.original_name }}</p>
+        <p class="discover-release-date">{{ formatDate(discover.first_air_date) }}</p>
+        <p class="discover-genres">
+          <span v-for="genre_id in discover.genre_ids" :key="genre_id" @click="listtv(genre_id)"
+            :class="{ active: genre_id === genreStore.currentGenreId }">
+            {{ getGenreName(genre_id) }}
+          </span>
+        </p>
+      </div>
+
+    </div>
+  </div>
 </template>
 
 <style scoped>
