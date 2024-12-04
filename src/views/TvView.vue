@@ -36,7 +36,7 @@ function opendiscover(discoverId) {
     isLoading.value = true;
   await genreStore.getAllGenres('tv');
   isLoading.value = false;
-    
+  
   });
   
 </script>
@@ -50,15 +50,15 @@ function opendiscover(discoverId) {
     </li>
   </ul>
   <loading v-model:active="isLoading" is-full-page />
-  <div class="discover-list">
-    <div v-for="discover in discover" :key="discover.id" class="discover-card">
+  <div class="tv-list">
+    <div v-for=" discover in discover" :key="discover.id" class="tv-card">
 
       <img :src="`https://image.tmdb.org/t/p/w500${discover.poster_path}`" :alt="discover.title"
         @click="opendiscover(discover.id)" />
-      <div class="discover-details">
-        <p class="discover-title">{{ discover.original_name }}</p>
-        <p class="discover-release-date">{{ formatDate(discover.first_air_date) }}</p>
-        <p class="discover-genres">
+      <div class="tv-details">
+        <p class="tv-title">{{ discover.original_name }}</p>
+        <p class="tv-release-date">{{ formatDate(discover.first_air_date) }}</p>
+        <p class="tv-genres">
           <span v-for="genre_id in discover.genre_ids" :key="genre_id" @click="listtv(genre_id)"
             :class="{ active: genre_id === genreStore.currentGenreId }">
             {{ getGenreName(genre_id) }}
