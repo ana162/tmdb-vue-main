@@ -16,7 +16,6 @@
     genreStore.setCurrentGenreId(genreId);
   isLoading.value = true;
   const response = await api.get('discover/tv', {
-
     params: {
       with_genres: genreId,
       language: 'pt-BR'
@@ -36,9 +35,9 @@ function opendiscover(discoverId) {
     isLoading.value = true;
   await genreStore.getAllGenres('tv');
   isLoading.value = false;
-  
+
   });
-  
+
 </script>
 
 <template>
@@ -69,7 +68,6 @@ function opendiscover(discoverId) {
     </div>
   </div>
 </template>
-
 <style scoped>
   .genre-list {
     display: flex;
@@ -78,6 +76,8 @@ function opendiscover(discoverId) {
     gap: 2rem;
     list-style: none;
     padding: 0;
+    margin-bottom: 2rem;
+
   }
 
   .genre-item {
